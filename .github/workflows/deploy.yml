@@ -24,13 +24,13 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t ahamea/aws-cicd2:${{ github.sha }} .
-          docker tag ahamea/aws-cicd2:${{ github.sha }} ahamea/aws-cicd2:latest
+          docker build -t ahamea/frontend:${{ github.sha }} .
+          docker tag ahamea/frontend:${{ github.sha }} ahamea/frontend:latest
 
       - name: Push Docker Images
         run: |
-          docker push ahamea/aws-cicd2:${{ github.sha }}
-          docker push ahamea/aws-cicd2:latest
+          docker push ahamea/frontend:${{ github.sha }}
+          docker push ahamea/frontend:latest
 
   deploy:
     needs: build-and-push
@@ -39,17 +39,17 @@ jobs:
     steps:
       - name: Pull Latest Docker Image
         run: |
-          sudo docker pull ahamea/aws-cicd2:latest
+          sudo docker pull ahamea/frontend:latest
 
       - name: Stop Existing Container
         run: |
-          sudo docker stop aws-cicd-container || true
-          sudo docker rm aws-cicd-container || true
+          sudo docker stop frontend-container || true
+          sudo docker rm frontend-container || true
 
       - name: Run New Container
         run: |
           sudo docker run -d \
-            --name aws-cicd-container \
+            --name frontend-container \
             -p 80:80 \
             --restart always \
-            ahamea/aws-cicd2:latest
+            ahamea/frontend:latest
